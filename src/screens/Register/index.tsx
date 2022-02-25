@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import {
   Keyboard,
   Modal,
-  TouchableWithoutFeedback,
   Alert
 } from "react-native";
+
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -26,11 +27,6 @@ import {
   Fields,
   TransactionsTypes
 } from "./styles";
-
-// type FormData = {
-//   name: string;
-//   amount: number;
-// }
 
 interface FormData {
   name: string;
@@ -54,6 +50,7 @@ export function Register() {
     amount: Yup.number()
       .typeError('Informe um valor numérico')
       .positive('O Valor não pode ser negativo')
+      .required('Preço é obrigatório')
   })
   
   const {
@@ -92,7 +89,11 @@ export function Register() {
   }
 
   return (
-   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback
+      onPress={Keyboard.dismiss} 
+      containerStyle={{ flex: 1 }}
+      style={{ flex: 1}}
+    >
     <Container>
       <Header>
         <Title>Cadastro</Title>
@@ -116,7 +117,7 @@ export function Register() {
             error={errors.amount && errors.amount.message}
           />
             
-            <TransactionsTypes>
+          <TransactionsTypes>
             <TransactionTypeButton
               title={'Entrada'}
               type={'up'}
