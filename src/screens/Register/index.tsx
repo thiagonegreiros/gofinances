@@ -7,13 +7,17 @@ import {
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid';
+
+import { useNavigation } from '@react-navigation/native';
 import { useForm } from 'react-hook-form'
+
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 
 import { Button } from "../../components/Form/Button";
 import { CategorySelectButton } from "../../components/Form/CategorySelectButton";
-import { Input } from "../../components/Form/Input";
 import { InputForm } from "../../components/Form/InputForm";
 import { TransactionTypeButton } from "../../components/Form/TransactionTypeButton";
 
@@ -38,12 +42,15 @@ interface FormData {
 export function Register() {
   const [transactionType, setTransactionType] = useState("");
   const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+
+  const dataKey = '@gofinances:transactions'; 
   
   const [category, setCategory] = useState({
     key: 'category',
     name: 'Categoria',
   });
 
+  const navigation = useNavigation();
 
   const schema = Yup.object().shape({
     name: Yup.string().required('Nome é obrigatório'),
@@ -56,7 +63,8 @@ export function Register() {
   const {
     control,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    reset
   } = useForm({
     resolver: yupResolver(schema)
   })
@@ -73,20 +81,63 @@ export function Register() {
     setCategoryModalOpen(false);
   }
 
-  function handleRegister(form: FormData) {
+  async function handleRegister(form: FormData) {
     if (!transactionType)
       return Alert.alert('Seleção obrigatória', 'Selecione o tipo da transação')
     if (category.key === 'category')
       return Alert.alert('Seleção obrigatória', 'Selecione a categoria')
 
-    const data = {
+    const newTransaction = {
+      id: String(uuid.v4()),
       name: form.name,
       amount: form.amount,
       transactionType,
-      category: category.key
+      category: category.key,
+      date: new Date(),
     }
-    console.log(data)
+
+    try {
+      const data = await AsyncStorage.getItem(dataKey);
+      const currentData = data ? JSON.parse(data) : [];
+
+      const dataFormatted = [
+        ...currentData,
+        newTransaction
+      ];
+
+      await AsyncStorage.setItem(dataKey, JSON.stringify(dataFormatted));
+
+      reset();
+      setTransactionType('');
+      setCategory({
+        key: 'category',
+        name: 'Categoria'
+      });
+
+      navigation.navigate('Listagem');
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Não é possível salvar")
+    }
   }
+
+  // useEffect(() => {
+  //   async function loadData() {
+  //     const data = await AsyncStorage.getItem(dataKey);
+      
+  //     console.log(JSON.parse(data!));
+  //   }
+    
+  //   loadData();
+    
+    //? Clean data Async Storage
+    // async function removeAll() {
+    //   await AsyncStorage.removeItem(dataKey);
+    // }
+
+    // removeAll();
+
+  // }, [])
 
   return (
     <TouchableWithoutFeedback
