@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { VictoryPie } from 'victory-native';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { addMonths, subMonths, format } from 'date-fns';
 import { ptBR } from 'date-fns/locale'
+import { VictoryPie } from 'victory-native';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 import { useTheme } from "styled-components";
 
@@ -45,13 +45,12 @@ interface CategoryData {
 
 export function Resume() {
   const [selectDate, setSelectDate] = useState(new Date);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([]);
 
   const theme = useTheme();
 
   function handleDateChange(action: 'next' | 'prev') {
-    setIsLoading(true);
     if (action === 'next') {
       const newDate = addMonths(selectDate, 1);
       setSelectDate(newDate);
@@ -113,13 +112,9 @@ export function Resume() {
     setIsLoading(false);
   }
 
-  useEffect(() => {
-    loadData();
-  }, [selectDate])
-
   useFocusEffect(useCallback(() => {
       loadData();
-  }, []));"red"
+  }, [selectDate]));
 
   return (
     <Container>

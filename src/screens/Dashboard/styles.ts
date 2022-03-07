@@ -1,5 +1,5 @@
 import styled from "styled-components/native";
-import { Platform, FlatList, FlatListProps } from "react-native";
+import { FlatList, FlatListProps } from "react-native";
 
 import { BorderlessButton } from 'react-native-gesture-handler';
 
