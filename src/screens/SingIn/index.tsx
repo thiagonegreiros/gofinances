@@ -1,5 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { RFValue } from "react-native-responsive-fontsize";
+import { useTheme } from 'styled-components'
 
 // * Imports SVG
 import AppleSvg from '../../assets/apple.svg';
@@ -18,9 +19,25 @@ import {
   Footer,
   FooterWrapper
 } from "./styles";
+import { ActivityIndicator, Alert } from "react-native";
 
 export function SingIn() {
-  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const { signInWithGoogle } = useAuth();
+
+  const theme = useTheme();
+
+  async function handleSignInWithGoogle() {
+    try {
+      setIsLoading(true);
+      return await signInWithGoogle();
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Não foi possivel autenticar')
+      setIsLoading(false);
+    } 
+    
+  }
 
   return (
     <Container>
@@ -49,11 +66,19 @@ export function SingIn() {
           <SignInSocialButton
             title="Entrar com Google"
             svg={GoogleSvg}
+            onPress={handleSignInWithGoogle}
           />
-          <SignInSocialButton
+          {/* <SignInSocialButton
             title="Entrar com Apple"
             svg={AppleSvg}
-          />
+          /> */}
+
+          {isLoading &&
+            <ActivityIndicator
+              color={ theme.colors.shape }
+              style={{ marginTop: 18 }}
+            />
+          }
         </FooterWrapper>
       </Footer>
     </Container>
