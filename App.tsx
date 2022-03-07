@@ -17,8 +17,10 @@ import{
 import theme from './src/global/styles/theme';
 
 import { NavigationContainer } from '@react-navigation/native';
-import { AppRoutes } from './src/routes/app.routes';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+import { AppRoutes } from './src/routes/app.routes';
+import { SingIn } from './src/screens/SingIn';
 
 export default function App() {
   const [fontsLoader] = useFonts({
@@ -42,7 +44,7 @@ export default function App() {
             backgroundColor="transparent"
             translucent
           />
-          <AppRoutes />
+          <SingIn />
         </NavigationContainer>
       </ThemeProvider>
     </GestureHandlerRootView>
