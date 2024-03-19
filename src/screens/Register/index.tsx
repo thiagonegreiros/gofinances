@@ -49,7 +49,7 @@ export function Register() {
     name: 'Categoria',
   });
 
-  const navigation = useNavigation();
+  const { navigate } = useNavigation();
 
   const { user } = useAuth();
 
@@ -116,7 +116,7 @@ export function Register() {
         name: 'Categoria'
       });
 
-      navigation.navigate('Listagem');
+      navigate('Listagem');
     } catch (error) {
       console.log(error);
       Alert.alert("Não é possível salvar")
